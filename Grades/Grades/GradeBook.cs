@@ -30,6 +30,7 @@ namespace Grades
             stats.lowestGrade = grades.Min();
             return stats;
         }
+        public string Name;
         List<float> grades;
    
     }
