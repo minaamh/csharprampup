@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,26 +13,42 @@ namespace Grades
         public GradeBook(string name = "No name set")
         {
             Name = name;
-            grades = new List<float>();
+            _grades = new List<float>();
         }
         public void AddGrade(float grade)
         {
-            grades.Add(grade);
+            _grades.Add(grade);
         }
 
         public GradeStatistics ComputeStatistics()
         {
             GradeStatistics stats = new GradeStatistics();
             float sum = 0;
-            foreach (float grade in grades)
+            foreach (float grade in _grades)
             {
                 sum += grade;
             }
-            stats.averageGrade = sum / grades.Count;
-            stats.highestGrade = grades.Max();
-            stats.lowestGrade = grades.Min();
+            stats.averageGrade = sum / _grades.Count;
+            stats.highestGrade = _grades.Max();
+            stats.lowestGrade = _grades.Min();
             return stats;
         }
+
+        public void WriteGrades(TextWriter @out)
+        {
+            @out.WriteLine("Grades:"+@out.NewLine);
+            foreach (float grade in _grades)
+            {
+                @out.WriteLine(grade);
+            }
+
+            //for (int i = 0; i < _grades.Count; i++)
+            //{
+            //    @out.WriteLine(_grades[i]);
+            //}
+            @out.WriteLine("**********************" + @out.NewLine);
+        }
+
         private string _name;
 
         public string Name
@@ -43,6 +60,10 @@ namespace Grades
 
             set
             {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException(value, "Name of GradeBook cannot be set to NULL or empty");
+                }
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (_name!=value)
@@ -51,7 +72,7 @@ namespace Grades
                         _name = value;
                         if (NameChanged != null)
                         {
-                            NameChangeEventArgs args = new NameChangeEventArgs();
+                            NameChangeEventArgsDelegate args = new NameChangeEventArgsDelegate();
                             args.OldValue = OldValue;
                             args.NewValue = value;
                             NameChanged(this, args);
@@ -63,7 +84,7 @@ namespace Grades
         }
 
         public event NamedChangedDelegate NameChanged;
-        List<float> grades;
+        private List<float> _grades;
 
     }
 }

@@ -43,15 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AvgGradechangedDelegate.cs" />
+    <Compile Include="AvgGradeEventArgsDelegate.cs" />
     <Compile Include="GradeBook.cs" />
     <Compile Include="GradeStatistics.cs" />
-    <Compile Include="NameChangeEventArgs.cs" />
+    <Compile Include="NameChangeEventArgsDelegate.cs" />
     <Compile Include="NamedChangedDelegate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="grades.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

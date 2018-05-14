@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Speech.Synthesis;
+using System.IO;
 
 namespace Grades
 {
@@ -15,13 +16,56 @@ namespace Grades
             SpeechSynthesizer synth = new SpeechSynthesizer();
             synth.Speak("Hello! This is the grade book program");
             GradeBook book = new GradeBook("Mina's Book");
-            book.AddGrade(91);
-            book.AddGrade(89.5f);
-            book.AddGrade(75);
+            //book.AddGrade(91);
+            //book.AddGrade(89.5f);
+            //book.AddGrade(75); Do this instead:
 
+            try
+            {
+                using (FileStream stream = File.Open("grades.txt", FileMode.Open))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string line = reader.ReadLine();
+                    while (line != null)
+                    {
+                        float grade = float.Parse(line);
+                        book.AddGrade(grade);
+                        line = reader.ReadLine();
+                    }
+                }
+                    
+                //The next chunk is replaced by the code above. Just another way to do things
+                //string[] lines = File.ReadAllLines("grades.txt");
+                //foreach (string line in lines)
+                //{
+                //    float grade = float.Parse(line);
+                //    book.AddGrade(grade);
+                //}
+                book.WriteGrades(Console.Out);
+            }
+            catch (FileNotFoundException ex)
+            {
+                Console.WriteLine("File not found!");
+                return;
+            }
+            
+
+            try
+            {
+                Console.WriteLine("Please enter a name for the book:");
+                book.Name = Console.ReadLine();
+            }
+            catch (ArgumentException ex)
+            {
+
+                Console.WriteLine(ex.Message);
+                return;
+            }
+            
+        
             WriteNames("Mina", "Mirna", "Magdi", "Manal");
             GradeStatistics stats = book.ComputeStatistics();
-
+            stats.AvgGradeChange += new AvgGradechangedDelegate(OnAvgGradeChange);
             book.NameChanged += new NamedChangedDelegate(OnNameChanged);
 
             int number = 20;
@@ -34,11 +78,20 @@ namespace Grades
             Console.WriteLine(stats.averageGrade);
             Console.WriteLine(stats.highestGrade);
             Console.WriteLine(stats.lowestGrade);
-
-            book.Name = "Mina's Book";
+            Console.WriteLine("{0} {1}", stats.LetterGrade, stats.Description);
+            //book.Name = "Mina's Book";
+            stats.LetterGrade = "A";
+            
         }
 
-        private static void OnNameChanged(object sender, NameChangeEventArgs args)
+        private static void OnAvgGradeChange(object sender, AvgGradeEventArgsDelegate args)
+        {
+            Console.WriteLine("Average grade changed from {0} to {1}", args.OldAvgGrade, args.NewAvgGrade);
+            SpeechSynthesizer synth = new SpeechSynthesizer();
+            synth.Speak($"Average grade changed from {args.OldAvgGrade} to {args.NewAvgGrade}");
+        }
+
+        private static void OnNameChanged(object sender, NameChangeEventArgsDelegate args)
         {
             Console.WriteLine("Name changed from {0} to {1}", args.OldValue, args.NewValue);
             SpeechSynthesizer synth = new SpeechSynthesizer();
