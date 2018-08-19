@@ -12,6 +12,7 @@ namespace Grades
 
         public GradeBook(string name = "No name set")
         {
+            Console.WriteLine("GradeBook ctor");
             Name = name;
             _grades = new List<float>();
         }
@@ -34,19 +35,19 @@ namespace Grades
             return stats;
         }
 
-        public void WriteGrades(TextWriter @out)
+        public void WriteGrades(TextWriter destination)
         {
-            @out.WriteLine("Grades:"+@out.NewLine);
+            destination.WriteLine("Grades:"+destination.NewLine);
             foreach (float grade in _grades)
             {
-                @out.WriteLine(grade);
+                destination.WriteLine(grade);
             }
 
             //for (int i = 0; i < _grades.Count; i++)
             //{
-            //    @out.WriteLine(_grades[i]);
+            //    @destination.WriteLine(_grades[i]);
             //}
-            @out.WriteLine("**********************" + @out.NewLine);
+            destination.WriteLine("**********************" + destination.NewLine);
         }
 
         private string _name;
@@ -84,7 +85,7 @@ namespace Grades
         }
 
         public event NamedChangedDelegate NameChanged;
-        private List<float> _grades;
+        protected List<float> _grades;
 
     }
 }

@@ -15,7 +15,7 @@ namespace Grades
 
             SpeechSynthesizer synth = new SpeechSynthesizer();
             synth.Speak("Hello! This is the grade book program");
-            GradeBook book = new GradeBook("Mina's Book");
+            ThrowAwayGradeBook book = new ThrowAwayGradeBook("Mina's Book");
             //book.AddGrade(91);
             //book.AddGrade(89.5f);
             //book.AddGrade(75); Do this instead:
@@ -33,7 +33,7 @@ namespace Grades
                         line = reader.ReadLine();
                     }
                 }
-                    
+
                 //The next chunk is replaced by the code above. Just another way to do things
                 //string[] lines = File.ReadAllLines("grades.txt");
                 //foreach (string line in lines)
@@ -48,7 +48,10 @@ namespace Grades
                 Console.WriteLine("File not found!");
                 return;
             }
-            
+            using (StreamWriter outputFile = File.CreateText("GradesResults.txt"))
+            {
+                book.WriteGrades(outputFile);
+            }
 
             try
             {
@@ -61,8 +64,8 @@ namespace Grades
                 Console.WriteLine(ex.Message);
                 return;
             }
-            
-        
+
+
             WriteNames("Mina", "Mirna", "Magdi", "Manal");
             GradeStatistics stats = book.ComputeStatistics();
             stats.AvgGradeChange += new AvgGradechangedDelegate(OnAvgGradeChange);
@@ -75,13 +78,16 @@ namespace Grades
             book.Name = "Amazing Book";
 
             WriteNames(book.Name);
+            WriteResults(stats);
+            Console.WriteLine("{0} {1}", stats.LetterGrade, stats.Description); stats.LetterGrade = "A";
+
+        }
+
+        private static void WriteResults(GradeStatistics stats)
+        {
             Console.WriteLine(stats.averageGrade);
             Console.WriteLine(stats.highestGrade);
             Console.WriteLine(stats.lowestGrade);
-            Console.WriteLine("{0} {1}", stats.LetterGrade, stats.Description);
-            //book.Name = "Mina's Book";
-            stats.LetterGrade = "A";
-            
         }
 
         private static void OnAvgGradeChange(object sender, AvgGradeEventArgsDelegate args)
