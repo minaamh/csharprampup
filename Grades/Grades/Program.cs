@@ -15,7 +15,7 @@ namespace Grades
 
             SpeechSynthesizer synth = new SpeechSynthesizer();
             synth.Speak("Hello! This is the grade book program");
-            ThrowAwayGradeBook book = new ThrowAwayGradeBook("Mina's Book");
+            IGradeTracker book = new ThrowAwayGradeBook("Mina's Book");
             //book.AddGrade(91);
             //book.AddGrade(89.5f);
             //book.AddGrade(75); Do this instead:
@@ -78,13 +78,18 @@ namespace Grades
             book.Name = "Amazing Book";
 
             WriteNames(book.Name);
-            WriteResults(stats);
+            WriteResults(book);
             Console.WriteLine("{0} {1}", stats.LetterGrade, stats.Description); stats.LetterGrade = "A";
 
         }
 
-        private static void WriteResults(GradeStatistics stats)
+        private static void WriteResults(IGradeTracker book)
         {
+            GradeStatistics stats = book.ComputeStatistics();
+            foreach (var grade in book)
+            {
+                Console.WriteLine(grade);
+            }
             Console.WriteLine(stats.averageGrade);
             Console.WriteLine(stats.highestGrade);
             Console.WriteLine(stats.lowestGrade);
@@ -104,7 +109,7 @@ namespace Grades
             synth.Speak($"Name changed from {args.OldValue} to {args.NewValue}");
         }
 
-        private static void WriteNames(params string []names)
+        private static void WriteNames(params string[] names)
         {
             foreach (string name in names)
             {
